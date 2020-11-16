@@ -85,6 +85,7 @@ func (c *ethereumChain) DeployModel(configAddress common.StorageAddress, weights
 		string(weightsAddress),
 		string(scriptsAddress),
 		big.NewInt(int64(params.UpdatesTillAggregation)),
+		big.NewInt(int64(params.ConsensusThreshold)),
 		big.NewInt(int64(params.Epochs)),
 	)
 	if err != nil {

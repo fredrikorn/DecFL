@@ -1,6 +1,7 @@
 package interface_tests
 
 import (
+	"math"
 	"math/rand"
 	"strconv"
 	"testing"
@@ -27,7 +28,9 @@ func DeployModelAndReadModel(chain ch.Chain, t *testing.T) {
 		testConfigAddress,
 		testWeightsAddress,
 		testScriptsAddress,
-		common.Hyperparameters{UpdatesTillAggregation: 3})
+		common.Hyperparameters{
+			UpdatesTillAggregation: 3,
+			ConsensusThreshold:     2})
 	if err != nil {
 		t.Error(err)
 	}
@@ -61,7 +64,9 @@ func LocalUpdateSubmission(chain ch.Chain, trainerID common.TrainerIdentifier, t
 		testConfigAddress,
 		testWeightsAddress,
 		testScriptsAddress,
-		common.Hyperparameters{UpdatesTillAggregation: 3})
+		common.Hyperparameters{
+			UpdatesTillAggregation: 3,
+			ConsensusThreshold:     2})
 	if err != nil {
 		t.Error(err)
 	}
@@ -132,6 +137,7 @@ func SubmitAggregationAndAggregation(chain ch.Chain, t *testing.T) {
 			testScriptsAddress,
 			common.Hyperparameters{
 				UpdatesTillAggregation: len(testCase.updates),
+				ConsensusThreshold:     int(math.Ceil(float64(len(testCase.updates)) * 0.6)),
 				Epochs:                 3,
 			},
 		)
@@ -166,12 +172,14 @@ func SubmitAggregationAndAggregation(chain ch.Chain, t *testing.T) {
 func ModelEpochAndMultipleSuccedingAggregations(chain ch.Chain, t *testing.T) {
 
 	updatesTillAggregation := 3
+	consensusThreshold := 2
 	id, err := chain.DeployModel(
 		testConfigAddress,
 		testWeightsAddress,
 		testScriptsAddress,
 		common.Hyperparameters{
 			UpdatesTillAggregation: updatesTillAggregation,
+			ConsensusThreshold:     consensusThreshold,
 			Epochs:                 2,
 		},
 	)
@@ -271,6 +279,7 @@ func StateTransitions(chain ch.Chain, t *testing.T) {
 			testScriptsAddress,
 			common.Hyperparameters{
 				UpdatesTillAggregation: len(testCase.updates),
+				ConsensusThreshold:     int(math.Ceil(float64(len(testCase.updates)) * 0.6)),
 				Epochs:                 2,
 			},
 		)
@@ -358,11 +367,14 @@ func StateTransitions(chain ch.Chain, t *testing.T) {
 func ResetLocalUpdatesAfterAggregation(chain ch.Chain, t *testing.T) {
 
 	updatesTillAggregation := 2
+	consensusThreshold := 2
 	modelID, err := chain.DeployModel(
 		testConfigAddress,
 		testWeightsAddress,
 		testScriptsAddress,
-		common.Hyperparameters{UpdatesTillAggregation: updatesTillAggregation})
+		common.Hyperparameters{
+			UpdatesTillAggregation: updatesTillAggregation,
+			ConsensusThreshold:     consensusThreshold})
 	if err != nil {
 		t.Error(err)
 	}
@@ -424,6 +436,7 @@ func Authorization(chain1 ch.Chain, chain2 ch.Chain, trainerID2 common.TrainerId
 			testScriptsAddress,
 			common.Hyperparameters{
 				UpdatesTillAggregation: 2,
+				ConsensusThreshold:     2,
 				Epochs:                 2,
 			},
 		)
@@ -477,6 +490,7 @@ func StateRejection(chain ch.Chain, t *testing.T) {
 		testScriptsAddress,
 		common.Hyperparameters{
 			UpdatesTillAggregation: 1,
+			ConsensusThreshold:     1,
 			Epochs:                 2,
 		},
 	)

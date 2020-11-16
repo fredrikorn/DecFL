@@ -13,6 +13,7 @@ type Update struct {
 
 type Hyperparameters struct {
 	UpdatesTillAggregation int
+	ConsensusThreshold     int
 	Epochs                 int
 }
 
