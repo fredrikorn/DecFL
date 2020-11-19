@@ -68,7 +68,7 @@ func main() {
 		store,
 		chain,
 		common.Hyperparameters{
-			UpdatesTillAggregation: 3,
+			UpdatesTillAggregation: 4,
 			Epochs:                 3,
 		},
 	)

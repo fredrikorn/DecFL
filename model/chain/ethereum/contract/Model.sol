@@ -96,7 +96,7 @@ contract Model {
         }
 
         // Find consensus if enough votes came in
-        if (submittedVotes >= updatesTillAggregation) {
+        if (aggregationVotes[currentCandidate] >= 2 || submittedVotes >= updatesTillAggregation) {
 
             weightsAddress = currentCandidate;
             current_epoch = current_epoch + 1;
