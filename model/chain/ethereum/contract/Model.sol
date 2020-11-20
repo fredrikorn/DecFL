@@ -11,6 +11,7 @@ contract Model {
 
     uint public current_epoch;
     uint public target_epoch;
+    uint public consensusThreshold;
 
     uint private updatesTillAggregation;
     mapping(string => uint) private aggregationVotes;
@@ -49,6 +50,7 @@ contract Model {
         weightsAddress = _weightsAddress;
         scriptsAddress = _scriptsAddress;
         updatesTillAggregation = _updatesTillAggregation;
+        consensusThreshold = 60;
         current_epoch = 0;
         target_epoch = _target_epoch;
         state = states.training;
@@ -96,7 +98,7 @@ contract Model {
         }
 
         // Find consensus if enough votes came in
-        if (aggregationVotes[currentCandidate] >= 2 || submittedVotes >= updatesTillAggregation) {
+        if (100*aggregationVotes[currentCandidate] >= consensusThreshold * updatesTillAggregation || submittedVotes >= updatesTillAggregation) {
 
             weightsAddress = currentCandidate;
             current_epoch = current_epoch + 1;
