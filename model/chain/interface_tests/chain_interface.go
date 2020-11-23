@@ -157,7 +157,10 @@ func SubmitAggregationAndAggregation(chain ch.Chain, t *testing.T) {
 
 			err = chain.SubmitAggregation(id, update)
 			if err != nil {
-				t.Error(err)
+				_state, _ := chain.State(id)
+				if _state == common.Aggregation {
+					t.Error(err)
+				}
 			}
 		}
 
@@ -206,7 +209,10 @@ func ModelEpochAndMultipleSuccedingAggregations(chain ch.Chain, t *testing.T) {
 
 		err = chain.SubmitAggregation(id, randomTestAddress1)
 		if err != nil {
-			t.Error(err)
+			_state, _ := chain.State(id)
+			if _state == common.Aggregation {
+				t.Error(err)
+			}
 		}
 	}
 
@@ -229,7 +235,10 @@ func ModelEpochAndMultipleSuccedingAggregations(chain ch.Chain, t *testing.T) {
 
 		err = chain.SubmitAggregation(id, randomTestAddress2)
 		if err != nil {
-			t.Error(err)
+			_state, _ := chain.State(id)
+			if _state == common.Aggregation {
+				t.Error(err)
+			}
 		}
 	}
 
@@ -273,13 +282,16 @@ func StateTransitions(chain ch.Chain, t *testing.T) {
 
 	for i, testCase := range testCases {
 
+		updatesTillAggregation := len(testCase.updates)
+		consensusThreshold := int(math.Ceil(float64(updatesTillAggregation) * 0.6))
+
 		id, err := chain.DeployModel(
 			testConfigAddress,
 			testWeightsAddress,
 			testScriptsAddress,
 			common.Hyperparameters{
-				UpdatesTillAggregation: len(testCase.updates),
-				ConsensusThreshold:     int(math.Ceil(float64(len(testCase.updates)) * 0.6)),
+				UpdatesTillAggregation: updatesTillAggregation,
+				ConsensusThreshold:     consensusThreshold,
 				Epochs:                 2,
 			},
 		)
@@ -293,7 +305,7 @@ func StateTransitions(chain ch.Chain, t *testing.T) {
 			if err != nil {
 				t.Error(err)
 			} else if state != common.Training {
-				t.Errorf("Case: %d State was %d after %d updates instead of after %d", i, state, j, len(testCase.updates))
+				t.Errorf("Case: %d State was %d after %d updates instead of after %d", i, state, j, updatesTillAggregation)
 			}
 
 			err = chain.SubmitLocalUpdate(id, update)
@@ -307,13 +319,16 @@ func StateTransitions(chain ch.Chain, t *testing.T) {
 			state, err := chain.State(id)
 			if err != nil {
 				t.Error(err)
-			} else if state != common.Aggregation {
-				t.Errorf("Case: %d State was %d after %d updates and %d aggregations", i, state, len(testCase.updates), j)
+			} else if j < consensusThreshold && state != common.Aggregation {
+				t.Errorf("Case: %d State was %d after %d updates and %d aggregations", i, state, updatesTillAggregation, j)
 			}
 
 			err = chain.SubmitAggregation(id, update)
 			if err != nil {
-				t.Error(err)
+				_state, _ := chain.State(id)
+				if _state == common.Aggregation {
+					t.Error(err)
+				}
 			}
 		}
 
@@ -321,7 +336,7 @@ func StateTransitions(chain ch.Chain, t *testing.T) {
 		if err != nil {
 			t.Error(err)
 		} else if state != common.Training {
-			t.Errorf("Case: %d Did not reset after %d aggregations", i, len(testCase.updates))
+			t.Errorf("Case: %d Did not reset after %d aggregations", i, updatesTillAggregation)
 		}
 
 		for j, update := range testCase.updates {
@@ -330,7 +345,7 @@ func StateTransitions(chain ch.Chain, t *testing.T) {
 			if err != nil {
 				t.Error(err)
 			} else if state != common.Training {
-				t.Errorf("Case: %d State was %d after %d updates instead of after %d", i, state, j, len(testCase.updates))
+				t.Errorf("Case: %d State was %d after %d updates instead of after %d", i, state, j, updatesTillAggregation)
 			}
 
 			err = chain.SubmitLocalUpdate(id, update)
@@ -344,13 +359,16 @@ func StateTransitions(chain ch.Chain, t *testing.T) {
 			state, err := chain.State(id)
 			if err != nil {
 				t.Error(err)
-			} else if state != common.Aggregation {
-				t.Errorf("Case: %d State was %d after %d updates and %d aggregations", i, state, len(testCase.updates), j)
+			} else if j < consensusThreshold && state != common.Aggregation {
+				t.Errorf("Case: %d State was %d after %d updates and %d aggregations", i, state, updatesTillAggregation, j)
 			}
 
 			err = chain.SubmitAggregation(id, update)
 			if err != nil {
-				t.Error(err)
+				_state, _ := chain.State(id)
+				if _state == common.Aggregation {
+					t.Error(err)
+				}
 			}
 		}
 
