@@ -1,0 +1,6 @@
+---
+vms:
+  - name: vm234
+    partitions: 1
+    p_key: 123456
+    id: 0
