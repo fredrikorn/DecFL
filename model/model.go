@@ -253,15 +253,17 @@ func (mod *modelImpl) Aggregate() (err error) {
 			_state, _ := mod.chain.State(mod.modelID)
 			if _state != common.Aggregation {
 				logger.Debug("Consensus reached. Submission ignored")
+				err = nil
 			} else {
 				logger.Debugf("Failed to submit aggregation: %s", err.Error)
 			}
 		} else {
 			logger.Debug("Wrote new weight address to chain")
-			mod.localEpoch++
 		}
 	}
 	logB.Printf("SUBMIT_AGGREGATION_CANDIDATE %.3f\n", time.Since(start).Seconds())
+	
+	mod.localEpoch++
 
 	return
 }
