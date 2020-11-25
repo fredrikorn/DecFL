@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
+	"math"
 	"os"
 	"strings"
 
@@ -61,6 +62,9 @@ func main() {
 	scripts := loadDataFromDisk(scriptsArchive)
 	trainers := strings.Split(loadDataFromDisk(trainerFile), "\n")
 
+	updatesTillAggregation := 3
+	consensusThreshold := int(math.Ceil(float64(updatesTillAggregation) * 0.6))
+
 	modelID, err := model.Deploy(
 		config,
 		weights,
@@ -68,7 +72,8 @@ func main() {
 		store,
 		chain,
 		common.Hyperparameters{
-			UpdatesTillAggregation: 3,
+			UpdatesTillAggregation: updatesTillAggregation,
+			ConsensusThreshold:     consensusThreshold,
 			Epochs:                 3,
 		},
 	)

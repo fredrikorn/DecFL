@@ -244,13 +244,25 @@ func (mod *modelImpl) Aggregate() (err error) {
 
 	start = time.Now()
 	// write the new global weights storage address to the chain
-	err = mod.chain.SubmitAggregation(mod.modelID, globalWeightsAddress)
-	if err != nil {
-		return
+	state, err := mod.chain.State(mod.modelID)
+	if state != common.Aggregation && err == nil {
+		logger.Debug("Consensus reached. Submission skipped")
+	} else {
+		err = mod.chain.SubmitAggregation(mod.modelID, globalWeightsAddress)
+		if err != nil {
+			_state, _ := mod.chain.State(mod.modelID)
+			if _state != common.Aggregation {
+				logger.Debug("Consensus reached. Submission ignored")
+				err = nil
+			} else {
+				logger.Debugf("Failed to submit aggregation: %s", err.Error)
+			}
+		} else {
+			logger.Debug("Wrote new weight address to chain")
+		}
 	}
-	logger.Debug("Wrote new weight address to chain")
 	logB.Printf("SUBMIT_AGGREGATION_CANDIDATE %.3f\n", time.Since(start).Seconds())
-
+	
 	mod.localEpoch++
 
 	return
