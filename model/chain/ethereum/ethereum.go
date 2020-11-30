@@ -7,7 +7,6 @@ import (
 	"log"
 	"math/big"
 	"os"
-	"time"
 
 	"github.com/FMorsbach/DecFL/model/chain"
 	"github.com/FMorsbach/DecFL/model/chain/ethereum/contract"
@@ -34,19 +33,19 @@ type ethereumChain struct {
 
 func (c *ethereumChain) waitForTransaction(hash ethCommon.Hash) error {
 
-	for {
-		time.Sleep(5 * time.Second)
+	// for {
+	// 	time.Sleep(5 * time.Second)
 
-		_, isPending, err := c.client.TransactionByHash(context.Background(), hash)
-		if err != nil {
-			panic(err)
-			return err
-		} else if !isPending {
-			break
-		} else {
-			logger.Debugln("Still pending transactions, sleeping for 5 second.")
-		}
-	}
+	// 	_, isPending, err := c.client.TransactionByHash(context.Background(), hash)
+	// 	if err != nil {
+	// 		panic(err)
+	// 		return err
+	// 	} else if !isPending {
+	// 		break
+	// 	} else {
+	// 		logger.Debugln("Still pending transactions, sleeping for 5 second.")
+	// 	}
+	// }
 
 	return nil
 }
@@ -197,7 +196,7 @@ func (c *ethereumChain) SubmitAggregation(id common.ModelIdentifier, address com
 
 	tx, err := instance.SubmitLocalAggregation(auth, string(address))
 	if err != nil {
-		panic(err)
+		// panic(err)
 		return
 	}
 
@@ -205,7 +204,6 @@ func (c *ethereumChain) SubmitAggregation(id common.ModelIdentifier, address com
 	if err != nil {
 		return
 	}
-
 
 	logger.Debugf("Wrote local update to chain as tx: %s", tx.Hash().Hex())
 	return
