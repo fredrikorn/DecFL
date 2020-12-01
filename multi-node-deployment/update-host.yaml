@@ -48,6 +48,8 @@
     file:
       path: /home/ubuntu/app
       state: directory
+      owner: ubuntu
+      group: ubuntu
 
   - name: create identity file   
     copy: 
@@ -60,7 +62,8 @@
       group: ubuntu
       mode: 0644
     with_items: "{{vms.vms}}"
-  
+    when: item.name == "{{inventory_hostname}}" 
+ 
   - name: create docker deamon file
     copy:
       content: |

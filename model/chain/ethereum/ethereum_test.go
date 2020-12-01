@@ -59,6 +59,10 @@ func TestSubmitAggregationAndAggregation(t *testing.T) {
 	interface_tests.SubmitAggregationAndAggregation(ethChain, t)
 }
 
+func TestConsensusThresholdAndAggregation(t *testing.T) {
+	interface_tests.ConsensusThresholdAndAggregation(ethChain, t)
+}
+
 func TestModelEpoch(t *testing.T) {
 	interface_tests.ModelEpochAndMultipleSuccedingAggregations(ethChain, t)
 }

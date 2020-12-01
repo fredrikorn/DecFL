@@ -172,6 +172,85 @@ func SubmitAggregationAndAggregation(chain ch.Chain, t *testing.T) {
 	}
 }
 
+func ConsensusThresholdAndAggregation(chain ch.Chain, t *testing.T) {
+
+	randomTestAddress1 := FillAddress()
+	randomTestAddress2 := FillAddress()
+
+	testCases := []struct {
+		updates          []common.StorageAddress
+		consensusReachAt int
+	}{
+		{[]common.StorageAddress{
+			randomTestAddress1,
+			randomTestAddress1,
+			randomTestAddress2,
+		}, 1},
+		{[]common.StorageAddress{
+			randomTestAddress1,
+			randomTestAddress2,
+			randomTestAddress1,
+		}, 2},
+		{[]common.StorageAddress{
+			randomTestAddress1,
+			randomTestAddress2,
+			randomTestAddress2,
+		}, 2},
+		{[]common.StorageAddress{
+			randomTestAddress1,
+			randomTestAddress2,
+			randomTestAddress1,
+			randomTestAddress2,
+		}, 3},
+	}
+
+	for i, testCase := range testCases {
+
+		id, err := chain.DeployModel(
+			testConfigAddress,
+			testWeightsAddress,
+			testScriptsAddress,
+			common.Hyperparameters{
+				UpdatesTillAggregation: len(testCase.updates),
+				ConsensusThreshold:     int(math.Ceil(float64(len(testCase.updates)) * 0.6)),
+				Epochs:                 3,
+			},
+		)
+		if err != nil {
+			t.Error(err)
+		}
+
+		for _, update := range testCase.updates {
+
+			err = chain.SubmitLocalUpdate(id, update)
+			if err != nil {
+				t.Error(err)
+			}
+		}
+
+		for i := 0; i <= testCase.consensusReachAt; i++ {
+			state, err := chain.State(id)
+			if err != nil {
+				t.Error(err)
+			} else if state != common.Aggregation {
+				t.Errorf("Case: %d Expected 1 as state but got %d", i, state)
+			}
+
+			err = chain.SubmitAggregation(id, testCase.updates[i])
+			if err != nil {
+				t.Error(err)
+			}
+		}
+
+		state, err := chain.State(id)
+		if err != nil {
+			t.Error(err)
+		} else if state == common.Aggregation {
+			t.Errorf("Case: %d Expected 0 as state but got %d", i, state)
+		}
+	}
+}
+
 func ModelEpochAndMultipleSuccedingAggregations(chain ch.Chain, t *testing.T) {
 
 	updatesTillAggregation := 3
@@ -205,14 +284,11 @@ func ModelEpochAndMultipleSuccedingAggregations(chain ch.Chain, t *testing.T) {
 			t.Error(err)
 		}
 	}
-	for i := 0; i < updatesTillAggregation; i++ {
+	for i := 0; i < consensusThreshold; i++ {
 
 		err = chain.SubmitAggregation(id, randomTestAddress1)
 		if err != nil {
-			_state, _ := chain.State(id)
-			if _state == common.Aggregation {
-				t.Error(err)
-			}
+			t.Error(err)
 		}
 	}
 
@@ -231,14 +307,11 @@ func ModelEpochAndMultipleSuccedingAggregations(chain ch.Chain, t *testing.T) {
 			t.Error(err)
 		}
 	}
-	for i := 0; i < updatesTillAggregation; i++ {
+	for i := 0; i < consensusThreshold; i++ {
 
 		err = chain.SubmitAggregation(id, randomTestAddress2)
 		if err != nil {
-			_state, _ := chain.State(id)
-			if _state == common.Aggregation {
-				t.Error(err)
-			}
+			t.Error(err)
 		}
 	}
 
@@ -384,7 +457,7 @@ func StateTransitions(chain ch.Chain, t *testing.T) {
 
 func ResetLocalUpdatesAfterAggregation(chain ch.Chain, t *testing.T) {
 
-	updatesTillAggregation := 2
+	updatesTillAggregation := 3
 	consensusThreshold := 2
 	modelID, err := chain.DeployModel(
 		testConfigAddress,
@@ -415,7 +488,7 @@ func ResetLocalUpdatesAfterAggregation(chain ch.Chain, t *testing.T) {
 		t.Errorf("Expected %d stored updates but got %d", updatesTillAggregation, len(updates))
 	}
 
-	for i := 0; i < updatesTillAggregation; i++ {
+	for i := 0; i < consensusThreshold; i++ {
 
 		err = chain.SubmitAggregation(modelID, randomTestAddress1)
 		if err != nil {
