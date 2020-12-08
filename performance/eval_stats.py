@@ -76,6 +76,8 @@ red = mpatches.Patch(color='red', label='Enhanced implementation')
 blue = mpatches.Patch(color='blue', label='Original implementation')
 plt.legend(handles=[red, blue])
 plt.title('Redis CPU%')
+plt.xlabel('TIME [s]')
+plt.ylabel('CPU %')
 plt.show()
 
 ###PLOT ACCUMULATED CPU% FOR REDIS###
@@ -85,6 +87,8 @@ red = mpatches.Patch(color='red', label='Enhanced implementation')
 blue = mpatches.Patch(color='blue', label='Original implementation')
 plt.legend(handles=[red, blue])
 plt.title('Accumulated Redis CPU%')
+plt.xlabel('TIME [s]')
+plt.ylabel('CPU %')
 plt.show()
 
 ###PLOT CPU% FOR CHAIN###
@@ -94,6 +98,8 @@ red = mpatches.Patch(color='red', label='Enhanced implementation')
 blue = mpatches.Patch(color='blue', label='Original implementation')
 plt.legend(handles=[red, blue])
 plt.title('Chain CPU%')
+plt.xlabel('TIME [s]')
+plt.ylabel('CPU %')
 plt.show()
 
 ###PLOT ACCUMULATED CPU% FOR CHAIN###
@@ -103,6 +109,8 @@ red = mpatches.Patch(color='red', label='Enhanced implementation')
 blue = mpatches.Patch(color='blue', label='Original implementation')
 plt.legend(handles=[red, blue])
 plt.title('Accumulated Chain CPU%')
+plt.xlabel('TIME [s]')
+plt.ylabel('CPU %')
 plt.show()
 
 ###PLOT SUM OF CPU% FOR WORKERS###
@@ -112,6 +120,8 @@ red = mpatches.Patch(color='red', label='Enhanced implementation')
 blue = mpatches.Patch(color='blue', label='Original implementation')
 plt.legend(handles=[red, blue])
 plt.title('Sum of Workers CPU%')
+plt.xlabel('TIME [s]')
+plt.ylabel('CPU %')
 plt.show()
 
 ###PLOT ACCUMULATED SUM OF CPU% FOR WORKERS###
@@ -121,6 +131,8 @@ red = mpatches.Patch(color='red', label='Enhanced implementation')
 blue = mpatches.Patch(color='blue', label='Original implementation')
 plt.legend(handles=[red, blue])
 plt.title('Accumulated Sum of Workers CPU%')
+plt.xlabel('TIME [s]')
+plt.ylabel('CPU %')
 plt.show()
 
 ###PLOT MEM FOR REDIS###
@@ -130,6 +142,8 @@ red = mpatches.Patch(color='red', label='Enhanced implementation')
 blue = mpatches.Patch(color='blue', label='Original implementation')
 plt.legend(handles=[red, blue])
 plt.title('Redis Memory Usage')
+plt.xlabel('TIME [s]')
+plt.ylabel('MEMORY [MiB]')
 plt.show()
 
 ###PLOT MEM FOR CHAIN###
@@ -139,6 +153,8 @@ red = mpatches.Patch(color='red', label='Enhanced implementation')
 blue = mpatches.Patch(color='blue', label='Original implementation')
 plt.legend(handles=[red, blue])
 plt.title('Chain Memory Usage')
+plt.xlabel('TIME [s]')
+plt.ylabel('MEMORY [MiB]')
 plt.show()
 
 ###PLOT SUM OF MEM FOR WORKERS###
@@ -148,6 +164,8 @@ red = mpatches.Patch(color='red', label='Enhanced implementation')
 blue = mpatches.Patch(color='blue', label='Original implementation')
 plt.legend(handles=[red, blue])
 plt.title('Sum of Workers Memory Usage')
+plt.xlabel('TIME [s]')
+plt.ylabel('MEMORY [MiB]')
 plt.show()
 
 ###PLOT ACCUMULATED SUM OF MEM FOR WORKERS
@@ -157,4 +175,6 @@ red = mpatches.Patch(color='red', label='Enhanced implementation')
 blue = mpatches.Patch(color='blue', label='Original implementation')
 plt.legend(handles=[red, blue])
 plt.title('Accumulated Sum of Workers Memory Usage')
+plt.xlabel('TIME [s]')
+plt.ylabel('MEMORY [MiB]')
 plt.show()
