@@ -1,4 +1,4 @@
-pragma solidity >=0.4.0 <0.7.0;
+pragma solidity >=0.4.0 <0.7.6;
 
 contract Model {
 
@@ -26,6 +26,8 @@ contract Model {
 
     Submission[] public localUpdates;
     mapping(address => bool) private trainers;
+    address[] private trainerArray;                     //Array for looping the rightToVote mapping
+    mapping(address => bool) private rightToVote;      //Should be true for trainers that have the right to vote (has not voted yet)
 
     modifier isTrainer()
     {
@@ -36,6 +38,12 @@ contract Model {
     modifier atState(states _state)
     {
         require(_state == state, "Not valid at this state");
+        _;
+    }
+
+    modifier hasNotVoted()
+    {
+        require(rightToVote[msg.sender], "Already submitted/voted this epoch");
         _;
     }
 
@@ -63,16 +71,24 @@ contract Model {
     isTrainer()
     {
         trainers[trainer] = true;
+        trainerArray.push(trainer);
+        rightToVote[trainer] =true;
     }
 
     function submitLocalUpdate(string memory updateAddress)
     public
     isTrainer()
+    hasNotVoted()
     atState(states.training)
     {
         localUpdates.push(Submission(msg.sender, updateAddress));
+        rightToVote[msg.sender] = false;
         if (localUpdates.length >= updatesTillAggregation) {
             state = states.aggregation;
+            //Reset rightToVote before aggregation
+            for(uint i=0; i<trainerArray.length; i++){
+                rightToVote[trainerArray[i]] = true;
+            }
         }
     }
 
@@ -87,11 +103,13 @@ contract Model {
     function submitLocalAggregation(string memory updateAddress)
     public
     isTrainer()
+    hasNotVoted()
     atState(states.aggregation)
     {
         aggregationVotes[updateAddress] = aggregationVotes[updateAddress] + 1;
         submittedVotes = submittedVotes + 1;
         votedAddresses.push(updateAddress);
+        rightToVote[msg.sender] = false;
 
         // Update best candidate if needed
         if (aggregationVotes[updateAddress] > aggregationVotes[currentCandidate]) {
@@ -112,6 +130,10 @@ contract Model {
             }
             while(localUpdates.length > 0){
                 localUpdates.pop();
+            }
+            // Reset voting rights
+            for(uint i=0; i<trainerArray.length; i++){
+                rightToVote[trainerArray[i]] = true;
             }
 
             if(current_epoch < target_epoch){
