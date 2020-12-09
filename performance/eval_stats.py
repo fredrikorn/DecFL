@@ -53,13 +53,13 @@ worker3_ori.index = np.arange(1, len(worker3_ori)+1)
 ###MAKE SOME CALCULATIONS###
 cpu_enh = worker1_enh['CPU %'] + worker2_enh['CPU %'] + worker3_enh['CPU %']
 mem_enh = worker1_enh['MEM USAGE / LIMIT'] + worker2_enh['MEM USAGE / LIMIT'] + worker3_enh['MEM USAGE / LIMIT']
-workers_enh = pd.DataFrame(data={'CPU %': cpu_enh, 'MEM USAGE / LIMIT': mem_enh})
+workers_enh = pd.DataFrame(data={'CPU %': cpu_enh, 'MEM USAGE / LIMIT': mem_enh, 'TIME': worker1_enh['TIME']})
 workers_enh['ACCUMULATED CPU %'] = workers_enh['CPU %'].cumsum()
 workers_enh['ACCUMULATED MEM USAGE'] = workers_enh['MEM USAGE / LIMIT'].cumsum()
 
 cpu_ori = worker1_ori['CPU %'] + worker2_ori['CPU %'] + worker3_ori['CPU %']
 mem_ori = worker1_ori['MEM USAGE / LIMIT'] + worker2_ori['MEM USAGE / LIMIT'] + worker3_ori['MEM USAGE / LIMIT']
-workers_ori = pd.DataFrame(data={'CPU %': cpu_ori, 'MEM USAGE / LIMIT': mem_ori})
+workers_ori = pd.DataFrame(data={'CPU %': cpu_ori, 'MEM USAGE / LIMIT': mem_ori, 'TIME': worker1_enh['TIME']})
 workers_ori['ACCUMULATED CPU %'] = workers_ori['CPU %'].cumsum()
 workers_ori['ACCUMULATED MEM USAGE'] = workers_ori['MEM USAGE / LIMIT'].cumsum()
 
@@ -70,8 +70,8 @@ chain_enh['ACCUMULATED CPU %'] = chain_enh['CPU %'].cumsum()
 chain_ori['ACCUMULATED CPU %'] = chain_ori['CPU %'].cumsum()
 
 ###PLOT CPU% FOR REDIS###
-ax1 = redis_enh.plot(kind='scatter',x='TIME',y='CPU %',color='red', label='Enhanced implementation')
-ax2 = redis_ori.plot(kind='scatter',x='TIME',y='CPU %',color='blue', label='Original implementation', ax=ax1)
+ax1 = redis_enh.plot(kind='line',x='TIME',y='CPU %',color='red', label='Enhanced implementation')
+ax2 = redis_ori.plot(kind='line',x='TIME',y='CPU %',color='blue', label='Original implementation', ax=ax1)
 red = mpatches.Patch(color='red', label='Enhanced implementation')
 blue = mpatches.Patch(color='blue', label='Original implementation')
 plt.legend(handles=[red, blue])
@@ -92,8 +92,8 @@ plt.ylabel('CPU %')
 plt.show()
 
 ###PLOT CPU% FOR CHAIN###
-ax1 = chain_enh.plot(kind='scatter',x='TIME',y='CPU %',color='red', label='Enhanced implementation')
-ax2 = chain_ori.plot(kind='scatter',x='TIME',y='CPU %',color='blue', label='Original implementation', ax=ax1)
+ax1 = chain_enh.plot(kind='line',x='TIME',y='CPU %',color='red', label='Enhanced implementation')
+ax2 = chain_ori.plot(kind='line',x='TIME',y='CPU %',color='blue', label='Original implementation', ax=ax1)
 red = mpatches.Patch(color='red', label='Enhanced implementation')
 blue = mpatches.Patch(color='blue', label='Original implementation')
 plt.legend(handles=[red, blue])
@@ -114,8 +114,8 @@ plt.ylabel('CPU %')
 plt.show()
 
 ###PLOT SUM OF CPU% FOR WORKERS###
-ax1 = workers_enh.plot(kind='scatter',x='TIME',y='CPU %',color='red', label='Enhanced implementation')
-ax2 = workers_ori.plot(kind='scatter',x='TIME',y='CPU %',color='blue', label='Original implementation', ax=ax1)
+ax1 = workers_enh.plot(kind='line',x='TIME',y='CPU %',color='red', label='Enhanced implementation')
+ax2 = workers_ori.plot(kind='line',x='TIME',y='CPU %',color='blue', label='Original implementation', ax=ax1)
 red = mpatches.Patch(color='red', label='Enhanced implementation')
 blue = mpatches.Patch(color='blue', label='Original implementation')
 plt.legend(handles=[red, blue])
@@ -158,8 +158,8 @@ plt.ylabel('MEMORY [MiB]')
 plt.show()
 
 ###PLOT SUM OF MEM FOR WORKERS###
-ax1 = workers_enh.plot(kind='scatter',x='TIME',y='MEM USAGE / LIMIT',color='red', label='Enhanced implementation')
-ax2 = workers_ori.plot(kind='scatter',x='TIME',y='MEM USAGE / LIMIT',color='blue', label='Original implementation', ax=ax1)
+ax1 = workers_enh.plot(kind='line',x='TIME',y='MEM USAGE / LIMIT',color='red', label='Enhanced implementation')
+ax2 = workers_ori.plot(kind='line',x='TIME',y='MEM USAGE / LIMIT',color='blue', label='Original implementation', ax=ax1)
 red = mpatches.Patch(color='red', label='Enhanced implementation')
 blue = mpatches.Patch(color='blue', label='Original implementation')
 plt.legend(handles=[red, blue])
