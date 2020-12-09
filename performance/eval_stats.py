@@ -1,21 +1,30 @@
 import pandas as pd
 import numpy as np
+import datetime
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 
 ###READ CSV AND PREPROCESS DATA###
-df_enh = pd.read_csv("stats_project1.csv", sep=',')
+df_enh = pd.read_csv("stats.csv", sep=',')
 df_enh = df_enh.loc[df_enh['NAME']!='NAME']
+df_enh.rename(columns={df_enh.columns[4]: 'TIME' }, inplace = True)
 df_enh = df_enh.replace({'%':''}, regex=True)
 df_enh['MEM USAGE / LIMIT'] = df_enh['MEM USAGE / LIMIT'].str.split('M').str[0]
 df_enh['MEM USAGE / LIMIT'] = df_enh['MEM USAGE / LIMIT'].str.split('B').str[0]
-df_enh[['CPU %', 'MEM USAGE / LIMIT', 'MEM %']] = df_enh[['CPU %', 'MEM USAGE / LIMIT', 'MEM %']].apply(pd.to_numeric)
+df_enh['TIME'] = df_enh['TIME'].str[1:]
+df_enh['TIME'] = pd.to_datetime(df_enh['TIME'], format="%H:%M:%S.%f")
+df_enh['TIME'] = ((df_enh['TIME']-df_enh['TIME'].iloc[0]).dt.total_seconds())
+df_enh[['CPU %', 'MEM USAGE / LIMIT', 'MEM %']] = df_enh[['CPU %', 'MEM USAGE / LIMIT', 'MEM %',]].apply(pd.to_numeric)
 
-df_ori = pd.read_csv("stats_felix1.csv", sep=',')
+df_ori = pd.read_csv("stats.csv", sep=',')
 df_ori = df_ori.loc[df_ori['NAME']!='NAME']
+df_ori.rename(columns={df_ori.columns[4]: 'TIME' }, inplace = True)
 df_ori = df_ori.replace({'%':''}, regex=True)
 df_ori['MEM USAGE / LIMIT'] = df_ori['MEM USAGE / LIMIT'].str.split('M').str[0]
 df_ori['MEM USAGE / LIMIT'] = df_ori['MEM USAGE / LIMIT'].str.split('B').str[0]
+df_ori['TIME'] = df_ori['TIME'].str[1:]
+df_ori['TIME'] = pd.to_datetime(df_ori['TIME'], format="%H:%M:%S.%f")
+df_ori['TIME'] = ((df_ori['TIME']-df_ori['TIME'].iloc[0]).dt.total_seconds())
 df_ori[['CPU %', 'MEM USAGE / LIMIT', 'MEM %']] = df_ori[['CPU %', 'MEM USAGE / LIMIT', 'MEM %']].apply(pd.to_numeric)
 
 ###SPLIT DATA AND ADD STATS FOR WORKERS###
@@ -59,15 +68,6 @@ redis_ori['ACCUMULATED CPU %'] = redis_ori['CPU %'].cumsum()
 
 chain_enh['ACCUMULATED CPU %'] = chain_enh['CPU %'].cumsum()
 chain_ori['ACCUMULATED CPU %'] = chain_ori['CPU %'].cumsum()
-
-###ADD TIME STAMPS TO THE DATAFRAME###
-redis_enh['TIME'] = np.arange(0,len(redis_enh)/2,0.5)
-chain_enh['TIME'] = np.arange(0,len(chain_enh)/2,0.5)
-workers_enh['TIME'] = np.arange(0,len(workers_enh)/2,0.5)
-
-redis_ori['TIME'] = np.arange(0,len(redis_ori)/2,0.5)
-chain_ori['TIME'] = np.arange(0,len(chain_ori)/2,0.5)
-workers_ori['TIME'] = np.arange(0,len(workers_ori)/2,0.5)
 
 ###PLOT CPU% FOR REDIS###
 ax1 = redis_enh.plot(kind='scatter',x='TIME',y='CPU %',color='red', label='Enhanced implementation')
