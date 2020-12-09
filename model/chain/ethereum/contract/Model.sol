@@ -64,6 +64,8 @@ contract Model {
         target_epoch = _target_epoch;
         state = states.training;
         trainers[msg.sender] = true;
+        trainerArray.push(msg.sender);
+        rightToVote[msg.sender] = true;
     }
 
     function addTrainer(address trainer)
