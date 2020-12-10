@@ -62,7 +62,7 @@ func main() {
 	scripts := loadDataFromDisk(scriptsArchive)
 	trainers := strings.Split(loadDataFromDisk(trainerFile), "\n")
 
-	updatesTillAggregation := 3
+	updatesTillAggregation := 5
 	consensusThreshold := int(math.Ceil(float64(updatesTillAggregation) * 0.6))
 
 	modelID, err := model.Deploy(
