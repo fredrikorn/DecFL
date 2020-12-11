@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import matplotlib.collections as collections
 
 
-WORKER_NUM = 5
+WORKER_NUM = sum(1 for line in open('../scenarios/local/trainers'))
 SCHEME = "CPU"
 STATS_CSV = "stats.csv"
 LOG_FILE = "stats.log"
