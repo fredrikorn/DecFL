@@ -22,6 +22,20 @@ services:
       - MODEL=${MODEL}
       - KEY=${KEY3}
       - DECFL_ID=2
+  worker4:
+    image: "decfl-worker:latest"
+    env_file: network.env
+    environment:  
+      - MODEL=${MODEL}
+      - KEY=${KEY4}
+      - DECFL_ID=3
+  worker5:
+    image: "decfl-worker:latest"
+    env_file: network.env
+    environment:  
+      - MODEL=${MODEL}
+      - KEY=${KEY5}
+      - DECFL_ID=4
 
 networks:
   default:

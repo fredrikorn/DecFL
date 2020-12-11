@@ -23,6 +23,9 @@ fi
 
 if [ "$SCENARIO" == "local" ];
 then
+    cd performance
+    ./collect_stats.sh &
+    cd -
     cd scenarios/local
     sudo MODEL=$CONTRACT docker-compose up
 else
