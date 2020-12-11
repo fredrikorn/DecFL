@@ -132,7 +132,6 @@ def main():
         consensus_point.append((point["TIME"], point[SCHEME_MAP[SCHEME]], skip_type))
     for point in consensus_point:
         chain_ax.plot(point[0], point[1], STYLE_MAP[point[2]], label=point[2], markersize=12, alpha=0.5)
-    plt.legend((SCHEME_MAP[SCHEME], "ignore", "skip"), fontsize=13, loc=(0.07,0.7))
     plt.savefig(f"{SCHEME}_chain_{FIG_NOTE}.jpg")
 
 
